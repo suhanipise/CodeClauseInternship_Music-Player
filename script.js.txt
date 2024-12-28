@@ -1,0 +1,65 @@
+// script.js
+
+// Get HTML elements
+const audioPlayer = document.getElementById("audio-player");
+const playPauseButton = document.getElementById("play-pause");
+const prevButton = document.getElementById("prev");
+const nextButton = document.getElementById("next");
+const volumeControl = document.getElementById("volume");
+const playlist = document.getElementById("playlist");
+const playlistItems = document.querySelectorAll("#playlist li");
+
+// Variables
+let currentTrackIndex = 0;
+
+// Functions
+const loadTrack = (index) => {
+  const track = playlistItems[index];
+  audioPlayer.src = track.getAttribute("data-src");
+  document.querySelector(".active")?.classList.remove("active");
+  track.classList.add("active");
+};
+
+const playPauseTrack = () => {
+  if (audioPlayer.paused) {
+    audioPlayer.play();
+    playPauseButton.textContent = "⏸ Pause";
+  } else {
+    audioPlayer.pause();
+    playPauseButton.textContent = "▶ Play";
+  }
+};
+
+const playNextTrack = () => {
+  currentTrackIndex = (currentTrackIndex + 1) % playlistItems.length;
+  loadTrack(currentTrackIndex);
+  audioPlayer.play();
+  playPauseButton.textContent = "⏸ Pause";
+};
+
+const playPrevTrack = () => {
+  currentTrackIndex = (currentTrackIndex - 1 + playlistItems.length) % playlistItems.length;
+  loadTrack(currentTrackIndex);
+  audioPlayer.play();
+  playPauseButton.textContent = "⏸ Pause";
+};
+
+// Event Listeners
+playPauseButton.addEventListener("click", playPauseTrack);
+nextButton.addEventListener("click", playNextTrack);
+prevButton.addEventListener("click", playPrevTrack);
+volumeControl.addEventListener("input", (e) => {
+  audioPlayer.volume = e.target.value;
+});
+
+playlistItems.forEach((item, index) => {
+  item.addEventListener("click", () => {
+    currentTrackIndex = index;
+    loadTrack(currentTrackIndex);
+    audioPlayer.play();
+    playPauseButton.textContent = "⏸ Pause";
+  });
+});
+
+// Initialize
+loadTrack(currentTrackIndex);
